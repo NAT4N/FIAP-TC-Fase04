@@ -1,0 +1,15 @@
+service: relatorio-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: java25
+  region: us-east-2
+
+package:
+  artifact: target/function.zip
+
+functions:
+  feedback:
+    handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
