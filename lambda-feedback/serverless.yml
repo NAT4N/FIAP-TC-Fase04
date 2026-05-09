@@ -19,6 +19,11 @@ provider:
             - sns:Publish
           Resource:
             Ref: FeedbackCriticoTopic
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            - arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback
 
 package:
   artifact: target/function.zip
