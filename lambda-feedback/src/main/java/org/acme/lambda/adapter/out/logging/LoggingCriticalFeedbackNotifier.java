@@ -8,39 +8,37 @@ import org.jboss.logging.Logger;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sns.model.PublishRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 @ApplicationScoped
 public class LoggingCriticalFeedbackNotifier implements CriticalFeedbackNotifier {
 
     private static final Logger LOG = Logger.getLogger(LoggingCriticalFeedbackNotifier.class);
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @ConfigProperty(name = "SNS_TOPIC_ARN")
     String TOPIC_ARN_ENV;
 
     @Override
     public void notify(Feedback feedback) {
-        LOG.warnf("Feedback critico recebido. nota=%d urgencia=%s",
+        LOG.warnf("Feedback critico recebido. nota=%d urgencia=%s, descricao:=%s",
                 feedback.nota(),
-                feedback.urgency().name());
+                feedback.urgency().name(),
+                feedback.descricao());
 
         if (TOPIC_ARN_ENV == null || TOPIC_ARN_ENV.isBlank()) {
             LOG.errorf("Variavel de ambiente %s nao definida. Nao sera possivel publicar no SNS.", TOPIC_ARN_ENV);
             return;
         }
 
-        Map<String, Object> message = new HashMap<>();
-        message.put("descricao", String.format("Feedback recebido. nota=%d", feedback.nota()));
-        message.put("urgencia", feedback.urgency().name());
-        message.put("dataEnvio", Instant.now().toString());
+        StringBuilder sb = new StringBuilder();
+        sb.append("Um feedback crítico foi recebido:\n");
+        sb.append("Descrição: ").append(feedback.descricao() == null ? "(sem descrição)" : feedback.descricao()).append("\n");
+        sb.append("Urgência: ").append(feedback.urgency().name()).append("\n");
+        sb.append("Data de envio: ").append(Instant.now().toString()).append("\n");
 
         try {
-            String payload = mapper.writeValueAsString(message);
+            String payload = sb.toString();
 
             AmazonSNS sns = AmazonSNSClientBuilder.defaultClient();
             PublishRequest publishRequest = new PublishRequest()
