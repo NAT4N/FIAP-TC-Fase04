@@ -6,16 +6,18 @@ provider:
   name: aws
   runtime: java25
   region: us-east-2
+
   httpApi:
     authorizers:
       lambdaAuthorizer:
         type: request
-        functionName: lambda-authorizer
+        functionArn: arn:aws:lambda:us-east-2:990773979941:function:lambda-authorizer-dev-lambdaAuthorizer
 
   environment:
     SNS_TOPIC_ARN:
       Ref: FeedbackCriticoTopic
-    TARGET_FUNCTION_NAME: "arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback-dev-armazenaFeedback"
+
+    TARGET_FUNCTION_NAME: arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback-dev-armazenaFeedback
 
   iam:
     role:
@@ -25,11 +27,12 @@ provider:
             - sns:Publish
           Resource:
             Ref: FeedbackCriticoTopic
+
         - Effect: Allow
           Action:
             - lambda:InvokeFunction
           Resource:
-            - "arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback-dev-armazenaFeedback"
+            - arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback-dev-armazenaFeedback
 
 package:
   artifact: target/function.zip
@@ -37,12 +40,14 @@ package:
 functions:
   feedback:
     handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
+
     events:
       - httpApi:
           path: /avaliacao
           method: post
+
           authorizer:
-            name: lambda-authorizer
+            name: lambdaAuthorizer
 
 resources:
   Resources:
