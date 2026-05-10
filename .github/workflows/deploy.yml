@@ -6,7 +6,45 @@ on:
       - main
 
 jobs:
-  deploy:
+
+  deploy-authorizer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configurar Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Cache Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build authorizer
+        run: mvn clean package -pl lambda-authorizer -am -DskipTests
+
+      - name: Instalar Serverless v3
+        run: npm install -g serverless@3
+
+      - name: Configurar AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy authorizer
+        run: serverless deploy
+        working-directory: lambda-authorizer
+
+  deploy-lambdas:
+    needs: deploy-authorizer
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,7 +53,6 @@ jobs:
           - lambda-feedback
           - lambda-relatorio
           - lambda-armazena-feedback
-          - lambda-authorizer
 
     steps:
       - name: Checkout
