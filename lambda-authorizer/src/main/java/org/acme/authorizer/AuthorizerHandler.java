@@ -9,7 +9,7 @@ import java.util.Map;
 public class AuthorizerHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
     @ConfigProperty(name = "API_KEY")
-    private String API_KEY;
+    String API_KEY;
 
     @Override
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
