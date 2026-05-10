@@ -12,6 +12,7 @@ provider:
       lambdaAuthorizer:
         type: request
         functionArn: arn:aws:lambda:us-east-2:990773979941:function:lambda-authorizer
+        enableSimpleResponses: true
 
   environment:
     SNS_TOPIC_ARN:
