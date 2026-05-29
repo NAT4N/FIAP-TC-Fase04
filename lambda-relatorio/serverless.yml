@@ -15,9 +15,7 @@ provider:
       - subnet-0da578789a8cb50e6
 
   environment:
-    SNS_TOPIC_ARN:
-      Ref: FeedbackCriticoTopic
-
+    SNS_TOPIC_ARN: arn:aws:sns:us-east-2:990773979941:feedback-critico
     DB_HOST: ${env:DB_HOST}
     DB_USER: ${env:DB_MASTER_USERNAME}
     DB_PASSWORD: ${env:DB_MASTER_PASSWORD}
@@ -28,8 +26,7 @@ provider:
         - Effect: Allow
           Action:
             - sns:Publish
-          Resource:
-            Ref: FeedbackCriticoTopic
+          Resource: arn:aws:sns:us-east-2:990773979941:feedback-critico
 
 package:
   artifact: target/function.zip
@@ -55,7 +52,6 @@ resources:
           - IpProtocol: -1
             CidrIp: 0.0.0.0/0
 
-    # VPC Endpoint para SNS (Interface Endpoint) - necessário quando a Lambda está em subnets privadas
     SnsVpcEndpointSecurityGroup:
       Type: AWS::EC2::SecurityGroup
       Properties:
@@ -82,9 +78,4 @@ resources:
           - subnet-0da578789a8cb50e6
         SecurityGroupIds:
           - Ref: SnsVpcEndpointSecurityGroup
-
-    FeedbackCriticoTopic:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: feedback-critico
 
