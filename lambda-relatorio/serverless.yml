@@ -33,6 +33,7 @@ package:
 
 functions:
   relatorio:
+    name: lambda-relatorio
     handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
     timeout: 30
     events:

@@ -26,8 +26,6 @@ provider:
     SNS_TOPIC_ARN:
       Ref: FeedbackCriticoTopic
 
-    TARGET_FUNCTION_NAME: arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback-dev-armazenaFeedback
-
     # RDS PostgreSQL Configuration
     DB_HOST: ${env:DB_HOST}
     DB_USER: ${env:DB_MASTER_USERNAME}
@@ -42,17 +40,12 @@ provider:
           Resource:
             Ref: FeedbackCriticoTopic
 
-        - Effect: Allow
-          Action:
-            - lambda:InvokeFunction
-          Resource:
-            - arn:aws:lambda:us-east-2:990773979941:function:lambda-armazena-feedback-dev-armazenaFeedback
-
 package:
   artifact: target/function.zip
 
 functions:
   feedback:
+    name: lambda-feedback
     handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
     timeout: 30
 
