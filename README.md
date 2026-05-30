@@ -1,4 +1,4 @@
-# Plataforma Serverless de Feedbacks
+# Plataforma Serverless de Feedbacks 
 
 Este repositório contém uma plataforma serverless de feedbacks hospedada na AWS. A aplicação permite que usuários registrem avaliações, classifica automaticamente a urgência do feedback, notifica administradores quando houver itens críticos e gera um relatório semanal com indicadores de satisfação.
 
